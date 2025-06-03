@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latest YouTube Videos</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; background: #f9f9f9; }
+        h1 { text-align: center; margin-bottom: 24px; }
+        .video-list { list-style: none; display: flex; flex-wrap: wrap; gap: 20px; padding: 0; margin: 0; }
+        .video-item {
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            flex: 1 1 calc(50% - 20px);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .video-item img { width: 100%; height: auto; display: block; }
+        .video-info { padding: 10px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .video-channel { font-size: 0.875rem; color: #999; margin-bottom: 4px; }
+        .video-title { font-size: 1rem; margin: 0 0 8px; color: #333; text-decoration: none; }
+        .video-title:hover { text-decoration: underline; }
+        .video-pub { font-size: 0.875rem; color: #666; }
+
+        .badge {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: red;
+            color: white;
+            padding: 2px 6px;
+            font-size: 0.75rem;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+        .badge.upcoming {
+            background: orange;
+        }
+    </style>
+</head>
+<body>
+    <h1>Latest Videos from Specified Channels (Last 7 Days)</h1>
+    <ul class="video-list">
+    {{range .}}
+        <li class="video-item">
+            {{if eq .LiveStatus "live"}}
+                <div class="badge">LIVE</div>
+            {{else if eq .LiveStatus "upcoming"}}
+                <div class="badge upcoming">SCHEDULED</div>
+            {{end}}
+
+            <a href="{{.URL}}" target="_blank">
+                <img src="{{.Thumbnail}}" alt="Thumbnail: {{.Title}}">
+            </a>
+            <div class="video-info">
+                <div class="video-channel">{{.Channel}}</div>
+                <a class="video-title" href="{{.URL}}" target="_blank">{{.Title}}</a>
+                <div class="video-pub">
+                    {{if eq .LiveStatus "live"}}
+                        Live from: {{.Published.Format "02 Jan 2006, 15:04"}}
+                    {{else if eq .LiveStatus "upcoming"}}
+                        Starts: {{.ScheduledStartTime.Format "02 Jan 2006, 15:04"}}
+                    {{else}}
+                        Published: {{.Published.Format "02 Jan 2006"}}
+                    {{end}}
+                </div>
+            </div>
+        </li>
+    {{end}}
+    </ul>
+</body>
+</html>
